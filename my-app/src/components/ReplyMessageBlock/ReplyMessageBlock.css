@@ -1,0 +1,14 @@
+.reply-message-container {
+  border-left: 2px rgb(40, 40, 252) solid;
+  padding: .5em;
+  padding-left: 1em;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+  background-color: rgb(79, 78, 78);
+  border-radius: 8px;
+}
+
+.reply-message__file {
+  pointer-events: none;
+}

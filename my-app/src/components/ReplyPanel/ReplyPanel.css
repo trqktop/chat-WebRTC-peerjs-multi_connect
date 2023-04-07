@@ -1,0 +1,28 @@
+.reply {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  height: 110px;
+  margin: .5em 16px;
+  border-radius: 8px;
+  background-color: rgb(48, 48, 48);
+}
+
+.reply__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.reply__close {
+  align-self: flex-start;
+  margin: 1em;
+  margin-left: auto;
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+.reply__close:hover {
+  opacity: .6;
+}

@@ -1,0 +1,46 @@
+.peerjs-form {
+  border: 1px rgb(48, 48, 48) solid;
+  display: grid;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.peerjs-form__id {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.peerjs-form__id:hover {
+  opacity: .6;
+}
+
+
+.peerjs-form__input {
+  width: 100%;
+  background-color: rgb(48, 48, 48);
+  outline: none;
+  border: 0.5px rgb(79, 78, 78) solid;
+  color: aliceblue;
+  font-size: 16px;
+  padding: 1em;
+  border-radius: 8px;
+}
+
+
+.peerjs-form__sbmt {
+  font-size: 16px;
+  padding: 1em;
+  display: block;
+  border-radius: 8px;
+  min-height: 100%;
+  color: white;
+  background-color: rgb(40, 40, 252);
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.peerjs-form__sbmt:hover {
+  opacity: .6;
+}

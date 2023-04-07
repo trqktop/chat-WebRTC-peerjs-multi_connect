@@ -1,0 +1,10 @@
+.window {
+    background-color: rgb(27, 27, 27);
+    flex: 1;
+    border: 1px rgb(48, 48, 48) solid;
+    max-width: 100%;
+}
+
+.peerId{
+    
+}

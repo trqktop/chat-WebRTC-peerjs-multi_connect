@@ -1,0 +1,132 @@
+.form-container {
+    position: sticky;
+    bottom: 0;
+    background-color: rgb(27, 27, 27);
+    border: 1px rgb(48, 48, 48) solid;
+}
+
+
+.form {
+    display: flex;
+    padding: 1em;
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.form__button-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.form__input {
+    width: 100%;
+    background-color: rgb(48, 48, 48);
+    outline: none;
+    border: .5px rgb(79, 78, 78) solid;
+    color: aliceblue;
+    font-size: 16px;
+    padding: 1em;
+    border-radius: 8px;
+}
+
+
+.form__input:focus {
+    border: .5px rgb(67, 92, 145) solid;
+    outline: 1px rgb(67, 92, 145) solid;
+}
+
+
+/* .form-container {
+    width: calc(90vw - 2em);
+    position: fixed;
+    background-color: rgb(27, 27, 27);
+    border-radius: 18px;
+    bottom: 1em;
+    margin-bottom: -1em;
+}
+ */
+
+
+
+.form__submit {
+    padding: 1em 1.5em;
+    border-radius: 8px;
+    font-size: 16px;
+    color: white;
+    background-color: rgb(40, 40, 252);
+    border: none;
+    outline: none;
+    cursor: pointer;
+    /* display: block;
+    min-height: 100%;
+    min-width: 50px;
+    max-width: 150px;
+    font-size: 1em;
+    padding: 2em;
+    background-color: rgb(12, 12, 12);
+    cursor: pointer;
+    border: 1px rgb(48, 48, 48) solid;
+    border-bottom-right-radius: 18px;
+    border-top-right-radius: 18px;
+    color: rgb(211, 211, 211); */
+}
+
+.form__input-file-label {
+    position: relative;
+    /* font-size: 1em;
+    padding: 1em;
+    color: rgb(211, 211, 211);
+    cursor: pointer;
+    min-width: 50px;
+    max-width: 150px;
+    background-color: rgb(12, 12, 12);
+    border: 1px rgb(48, 48, 48) solid;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    min-height: 100%;
+    border-bottom-left-radius: 18px;
+    border-top-left-radius: 18px;
+    margin-left: 1em; */
+}
+
+input[type="file"] {
+    display: none;
+}
+
+
+.form__input-label-text {
+    display: flex;
+    margin: auto;
+    cursor: pointer;
+    /*   overflow: hidden;
+    word-wrap: break-word; */
+}
+
+
+.form__input-svg-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form__input-svg {
+    fill: rgb(109, 122, 137);
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.form__input-file-label:hover {
+    opacity: .6;
+}
+
+.form__submit:hover {
+    opacity: .6;
+}
+
+.form__submit:active {
+    opacity: .3;
+}

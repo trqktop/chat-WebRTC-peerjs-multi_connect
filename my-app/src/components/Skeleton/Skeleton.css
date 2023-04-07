@@ -1,0 +1,43 @@
+:root {
+    --loading-grey: rgb(48, 48, 48);
+}
+
+.card {
+    width: 30vw;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.description {
+    font-size: 1rem;
+    line-height: 1.4rem;
+}
+
+.loading .description {
+    background-color: var(--loading-grey);
+    background: linear-gradient(100deg,
+            rgba(255, 255, 255, 0) 40%,
+            rgba(255, 255, 255, .5) 50%,
+            rgba(255, 255, 255, 0) 60%) var(--loading-grey);
+    background-size: 200% 100%;
+    background-position-x: 180%;
+    animation: 1s loading ease-in-out infinite;
+}
+
+@keyframes loading {
+    to {
+        background-position-x: -20%;
+    }
+}
+
+.loading {
+    min-height: 1.6rem;
+    animation-delay: .05s;
+}
+
+.loading .description {
+    min-height: 4rem;
+    animation-delay: .06s;
+}

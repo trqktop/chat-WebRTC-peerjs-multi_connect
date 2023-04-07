@@ -1,0 +1,24 @@
+.control-panel {
+  font-size: 18px;
+}
+
+.control-panel__items {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-panel__item {
+  color: rgb(165, 165, 165);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.control-panel__item:hover {
+  opacity: .6;
+}
+.control-panel__item-title {
+  font-size: 15px;
+}
