@@ -1,17 +1,19 @@
-import { sendMessage, replyMessage, RootState } from "../../redux/store";
+import { sendMessage, replyMessage, RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import { sendName } from "../../redux/store";
-import nameGenerator from "../../features/nameGenerator";
+import { sendName } from "../../store/store";
+import nameGenerator from "../../utils/nameGenerator";
 import ReplyPanel from "../ReplyPanel";
-import toBase64 from "../../features/toBase64";
+import toBase64 from "../../utils/formater/toBase64";
 import "./Form.css";
+
 const Form = () => {
-  const [inputValue, setValue] = useState("");
+  const [messageInputValue, setMessageInputValue] = useState("");
   const [filePath, setFilePath] = useState(null);
-  const reply = useSelector((state: RootState) => state.chat.reply);
+  // const reply = useSelector((state: RootState) => state.chat.reply);
+  const messageInput: any = useRef(null);
   const fileInput: any = useRef(null);
-  const file = useRef(null);
+  const file: any = useRef(null);
   const dispatch = useDispatch();
 
   // useEffect(() => {
@@ -19,34 +21,42 @@ const Form = () => {
   //   dispatch(sendName(randomName));
   // }, []);
 
-  // const sendMessageWithFiles = (
-  //   fileInput: any,
-  //   setFilePath: React.SetStateAction<any>
-  // ) => {
-  //   const file = fileInput.files[0];
-  //   toBase64(file).then((url) => {
-  //     const fileData = {
-  //       src: url,
-  //       type: file.type,
-  //     };
-  //     dispatch(sendMessage({ inputValue, fileData, reply }));
-  //   });
-  //   setFilePath(null);
-  // };
+  const sendMessageWithFiles = () =>
+    // fileInput: any,
+    // setFilePath: React.SetStateAction<any>
+    {
+      // const file = fileInput.files[0];
+      toBase64(file.current).then((url) => {
+        // const fileData = {
+        //   src: url,
+        //   type: file.type,
+        // };
+        const fileData: any = {
+          src: url,
+          type: file.current.type,
+        };
+        dispatch(sendMessage({ message: messageInputValue, file: fileData })); //reply
+      });
+      // setFilePath(null);
 
-  // const sendMessageWithoutFiles = (e: any) => {
-  //   dispatch(sendMessage({ inputValue }));
-  //   e.target[1].value = "";
-  // };
+      // dispatch(sendMessage(messageInputValue));
+    };
+
+  const sendMessageWithoutFiles = () => {
+    dispatch(sendMessage({ message: messageInputValue }));
+    setMessageInputValue("");
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    if (inputValue.length) {
-      dispatch(sendMessage(inputValue));
+    if (messageInputValue && !file.current) {
+      sendMessageWithoutFiles();
     }
-    if (fileInput.current.value) {
+    if (file.current) {
+      sendMessageWithFiles();
       fileInput.current.value = null;
     }
+
     // const text = e.target[0].value;
     // const fileInput = e.target[1];
     // if (text.length >= 1 && fileInput.value.length < 1) {
@@ -56,7 +66,7 @@ const Form = () => {
     // }
     // dispatch(replyMessage(null));
     // fileInput.value = "";
-    setValue("");
+    setMessageInputValue("");
     setFilePath(null);
   };
   const handleFilePick = (e: any) => {
@@ -71,9 +81,10 @@ const Form = () => {
       <form className="form" onSubmit={handleSubmit}>
         <input
           type="text"
-          value={inputValue}
+          ref={messageInput}
+          value={messageInputValue}
           className="form__input"
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => setMessageInputValue(e.target.value)}
           placeholder="Type your message..."
         ></input>
         <div className="form__button-group">

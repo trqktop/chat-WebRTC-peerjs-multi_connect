@@ -1,10 +1,12 @@
 import { Middleware } from "@reduxjs/toolkit";
 import { io } from "socket.io-client";
-import { getActions } from "./actions";
 import localforage from "localforage";
 import { RootState, TMessage } from "./store";
-
+import { sendName } from "./store";
+import nameGenerator from "../features/nameGenerator";
 const uniqid = require("uniqid");
+
+
 
 export type TFile = {
   file: {
@@ -22,76 +24,72 @@ export type TMessageWithoutFiles = {
 //  "proxy": "http://192.168.2.225:8888" my
 //  "proxy": "http://192.168.2.159:8000"
 
+
+const addToStorage = async (file: any) => {
+  await localforage.getItem('files').then(async (files: any) => {
+    const store = files ? [...files, file] : [file]
+    await localforage.setItem("files", store)
+  })
+}
+
+const createStorage = async (messages: any) => {
+  await localforage.setItem("files", messages)
+}
+
+const messageConstructor = (data: any, getState: () => RootState) => {
+  const id = uniqid()
+  return {
+    message: data.inputValue,
+    user: getState().chat.myName,
+    reply: getState().chat.reply ?? null,
+    file: data.fileData ? { ...data.fileData, id: id } : null,
+    id: id,
+  };
+};
+
+
 export const createMySocketMiddleware = (): Middleware => {
   return ({ getState, dispatch }) => {
-    const url = "http://192.168.2.225:8888";
-
+    const url = "http://localhost:8888";
     let socket = io(url);
-    const { actions } = getActions();
-    actions.forEach(({ reducerAction, socketAction }) => {
-      socket.on(socketAction, (data) => {
-        dispatch({
-          type: reducerAction,
-          payload: data,
-        });
+    socket.on('GET_USERS', (names) => {
+      dispatch({
+        type: 'chat/getUsers',
+        payload: names,
       });
     });
-
-    socket.on("GET_MESSAGES", (messageFromServer) => {
-      const { user, message, thread, id, file } = messageFromServer;
-      if (file) {
-        const fileData = {
-          file,
-          id,
-        };
-        localforage.getItem("files").then((files: any) => {
-          const newFiles = [...files, fileData];
-          localforage.setItem("files", newFiles, () => {
-            const messageWithoutFile = { user, message, thread, id };
-            dispatch({
-              type: "chat/getMessage",
-              payload: messageWithoutFile,
-            });
-          });
-        });
-      } else {
-        dispatch({
-          type: "chat/getMessage",
-          payload: messageFromServer,
-        });
+    socket.on("GET_MESSAGES", async (message) => {
+      if (message.file) {
+        const file = { ...message.file }
+        await addToStorage(file)
+        delete message.file.src
       }
+      dispatch({
+        type: "chat/getMessage",
+        payload: message,
+      });
     });
-
-    socket.on("REQUEST_MESSAGES", (messages) => {
-      const files = messages
-        .filter((item: TMessage) => item.file)
-        .map(({ file, id }: TFile) => {
-          return { file, id };
-        });
-
-      localforage.setItem("files", files, () => {
-        const clearMessages = messages.map(
-          ({ user, message, id, reply }: TMessageWithoutFiles) => {
-            return {
-              user,
-              message,
-              id,
-              reply,
-            };
-          }
-        );
-        localforage.setItem("files", files, () => {
-          dispatch({
-            type: "chat/updateMessages",
-            payload: clearMessages,
-          });
-        });
+    socket.on("REQUEST_MESSAGES", async (messages) => {
+      const files = []
+      for (let i = 0; i <= messages.length - 1; i++) {
+        if (messages[i].file) {
+          const file = { ...messages[i].file, id: messages[i].id }
+          files.push(file)
+          delete messages[i].file.src
+        }
+      }
+      if (files.length) {
+        await createStorage(files)
+      }
+      dispatch({
+        type: "chat/updateMessages",
+        payload: messages,
       });
     });
 
     return (next) => (action) => {
       if (action.type) {
-        if (action.type === "chat/sendName") {
+        if (action.type === "chat/joinChat") {
           socket.emit("JOIN_CHAT", { name: action.payload });
         }
         if (action.type === "chat/sendMessage") {
@@ -104,13 +102,3 @@ export const createMySocketMiddleware = (): Middleware => {
   };
 };
 
-const messageConstructor = (data: any, getState: () => RootState) => {
-  return {
-    message: data.inputValue,
-    user: getState().chat.myName,
-    reply: getState().chat.reply ?? null,
-    file: data.fileData ?? null,
-    id: data.id ?? uniqid(),
-    thread: data.thread ?? null,
-  };
-};

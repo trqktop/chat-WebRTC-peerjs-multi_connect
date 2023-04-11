@@ -1,8 +1,10 @@
 import "./Message.css";
 import MessageControlPanel from "../../MessageControlPanel";
-import getTypeFile from "../../../features/getTypeFile";
-import ReplyMessageBlock from "../../ReplyMessageBlock";
+// import getTypeFile from "../../utils/getTypeFile";
+// import ReplyMessageBlock from "../ReplyMessageBlock";
 const Message = ({ data }: any) => {
+  const { id, message }: any = { ...data };
+
   // const { user, message, file, id, reply }: any = { ...data };
   // const { src, type }: any = { ...file };
   // const renderFile = file
@@ -11,6 +13,7 @@ const Message = ({ data }: any) => {
   //       height: window.innerHeight / 3,
   //     })
   //   : null;
+
   return (
     <>
       {/* {modalIsOpened ? <MessageModal /> : null}  */}
@@ -18,7 +21,7 @@ const Message = ({ data }: any) => {
         {/* id={0} */}
         {/* <ReplyMessageBlock reply={reply} />
         <span className="message__username">{user}</span> */}
-        <span>{data}</span>
+        <span>{message}</span>
         {/* <span className="message__file">{renderFile}</span> */}
         <MessageControlPanel message={data} />
       </div>

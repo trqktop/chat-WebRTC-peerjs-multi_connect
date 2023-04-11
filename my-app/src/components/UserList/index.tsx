@@ -1,9 +1,8 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../store/store";
 import "./UserList.css";
 const UserList = () => {
   const users = useSelector((state: RootState) => state.chat.users);
-
   return (
     <ul className="users">
       {users.map((name: string, index: number) => (

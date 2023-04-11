@@ -1,9 +1,10 @@
 import { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { connectToPeer } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { connectToPeer } from "../../store/store";
 import "./PeerJsConnectForm.css";
 const PeerJsConnectForm = () => {
   const inputId = useRef<HTMLInputElement>(null);
+  const peerId = useSelector((state: any) => state.chat.peerId);
   const dispatch = useDispatch();
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +27,7 @@ const PeerJsConnectForm = () => {
   return (
     <form onSubmit={submitHandler} className="peerjs-form">
       <span className="peerjs-form__id" onClick={copyHandler}>
-        92fa63e6-6ed4-4216-8ec3-5798b0306038main
+        {peerId}
       </span>
       <input
         className="peerjs-form__input"

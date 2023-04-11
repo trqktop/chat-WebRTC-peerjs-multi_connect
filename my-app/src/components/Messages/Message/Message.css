@@ -78,23 +78,3 @@ image {
   word-wrap: break-word;
 }
 
-/* .message__modal {
-    position: absolute;
-    background-color: rgb(48, 48, 48);
-    padding: .5em;
-    bottom: 100%;
-    left: 100%;
-} */
-
-
-/* .message__tread-group {
-  display: flex;
-  align-self: flex-end;
-  gap: 3px;
-  align-items: center;
-}
-
-.message__tgread-count {
-  font-size: 12px;
-  color: rgb(165, 165, 165);
-} */

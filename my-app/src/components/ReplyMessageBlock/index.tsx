@@ -1,5 +1,5 @@
 import "./ReplyMessageBlock.css";
-import getTypeFile from "../../features/getTypeFile";
+import getTypeFile from "../../utils/getTypeFile";
 import React from "react";
 
 const ReplyMessageBlock: React.FC<any> = ({ reply }) => {
