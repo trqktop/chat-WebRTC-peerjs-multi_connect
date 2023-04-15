@@ -1,4 +1,4 @@
-import { RootState } from "../../store/store";
+import { RootState } from "../../types/chat";
 import { useSelector } from "react-redux";
 import React, { useEffect, useRef, useState } from "react";
 import Message from "./Message";

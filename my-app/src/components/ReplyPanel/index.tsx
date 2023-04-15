@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import getTypeFile from "../../utils/getTypeFile";
 import "./ReplyPanel.css";
-import { RootState } from "../../store/store";
+import { RootState } from "../../types/chat";
 
 const ReplyPanel = () => {
 

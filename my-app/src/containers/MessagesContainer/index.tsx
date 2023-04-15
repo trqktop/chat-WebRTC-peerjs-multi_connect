@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { RootState } from "../../store/store";
+import { RootState } from "../../types/chat";
 import { useSelector } from "react-redux";
 import Messages from "../../components/Messages";
 import "./MessagesContainer.css";

@@ -1,77 +1,33 @@
 import { sendMessage } from "../../store/store";
-import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect, useRef } from "react";
-import nameGenerator from "../../utils/nameGenerator";
+import { useDispatch, } from "react-redux";
+import { useState, useRef } from "react";
 import ReplyPanel from "../ReplyPanel";
-import toBase64 from "../../utils/formater/toBase64";
 import "./Form.css";
 
-const Form = () => {
-  const [messageInputValue, setMessageInputValue] = useState("");
-  const [filePath, setFilePath] = useState(null);
-  // const reply = useSelector((state: RootState) => state.chat.reply);
-  const messageInput: any = useRef(null);
-  const fileInput: any = useRef(null);
-  const file: any = useRef(null);
+const Form: React.FunctionComponent = () => {
+  const [messageInputValue, setMessageInputValue] = useState<string>("");
+  const [filePath, setFilePath] = useState<string | null>(null);
+  const messageInput = useRef<HTMLInputElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const selectedFile = useRef<File | null>(null);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const randomName = nameGenerator();
-  //   dispatch(sendName(randomName));
-  // }, []);
-
-  const sendMessageWithFiles = () =>
-  // fileInput: any,
-  // setFilePath: React.SetStateAction<any>
-  {
-    // const file = fileInput.files[0];
-    toBase64(file.current).then((url) => {
-      // const fileData = {
-      //   src: url,
-      //   type: file.type,
-      // };
-      const fileData: any = {
-        src: url,
-        type: file.current.type,
-      };
-      dispatch(sendMessage({ message: messageInputValue, file: fileData })); //reply
-    });
-    // setFilePath(null);
-
-    // dispatch(sendMessage(messageInputValue));
-  };
-
-  const sendMessageWithoutFiles = () => {
-    dispatch(sendMessage({ message: messageInputValue }));
-    setMessageInputValue("");
-  };
-
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (messageInputValue && !file.current) {
-      sendMessageWithoutFiles();
-    }
-    if (file.current) {
-      sendMessageWithFiles();
-      fileInput.current.value = null;
-    }
-
-    // const text = e.target[0].value;
-    // const fileInput = e.target[1];
-    // if (text.length >= 1 && fileInput.value.length < 1) {
-    //   sendMessageWithoutFiles(e);
-    // } else if (fileInput.value.length > 1) {
-    //   sendMessageWithFiles(fileInput, setFilePath);
-    // }
-    // dispatch(replyMessage(null));
-    // fileInput.value = "";
+    dispatch(sendMessage({ message: messageInputValue }));
     setMessageInputValue("");
     setFilePath(null);
   };
-  const handleFilePick = (e: any) => {
-    const filePath = e.target.files[0].name;
-    file.current = fileInput.current.files[0];
-    setFilePath(filePath);
+
+
+  const handleFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    if (files?.length) {
+      setFilePath(files[0].name);
+      selectedFile.current = files[0];
+    } else {
+      setFilePath(null);
+      selectedFile.current = null;
+    }
   };
 
   return (

@@ -5,18 +5,21 @@ import { savePeerId } from "../store/store";
 
 const createPeerMiddlewareWithStore = (): Middleware => {
   peer.initPeer(undefined)
-  return ({ dispatch, getState }) => {
+  return ({ dispatch }) => {
     peer.dispatch = dispatch
-    return next => (action) => {
-      if (action.type === 'chat/connectToPeer') {
-        peer.connectTo(action.payload)
-        dispatch(savePeerId(peer.peerId))
+    return next => action => {
+      switch (action.type) {
+        case 'chat/connectToPeer':
+          peer.connectTo(action.payload);
+          dispatch(savePeerId(peer.peerId));
+          break;
+        case 'chat/sendMessage':
+          peer.dataConnection?.send(action.payload);
+          break;
+        default:
+          break;
       }
-      if (action.type === 'chat/sendMessage') {
-        peer.dataConnection?.send(action.payload)
-      }
-      next(action)
-      console.log(action.type)
+      return next(action)
     }
   }
 }

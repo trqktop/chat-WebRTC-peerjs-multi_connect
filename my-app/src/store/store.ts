@@ -1,18 +1,10 @@
 import {
   configureStore,
   createSlice,
-  ThunkAction,
-  Action,
 } from "@reduxjs/toolkit";
 import createPeerMiddlewareWithStore from "../middleware/createPeerMiddlewareWithStore";
+import { ChatState } from '../types/chat';
 
-
-interface ChatState {
-  connected: boolean;
-  peerId: string | null;
-  WEBcreator: boolean;
-  messages: any[];
-}
 
 const initialState: ChatState = {
   connected: false,
@@ -20,7 +12,6 @@ const initialState: ChatState = {
   WEBcreator: false,
   messages: [],
 };
-
 
 export const chatSlice = createSlice({
   name: "chat",
@@ -59,13 +50,3 @@ export const store = configureStore({
   },
   middleware: [peerMiddleware]
 });
-
-
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
