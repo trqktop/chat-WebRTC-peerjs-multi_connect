@@ -25,30 +25,32 @@ const WEB: WebInterface = {
   storeListeners() {
     this.store?.on('open', (id: string) => {
       console.log('Store was created:', id)
-      WEB.connectIdList.push(id);
-    })
-    this.store?.on('connection', (conn) => {
-      if (this.connectIdList.includes(conn.peer)) {
-        conn.close();
-      }
-      else {
-        const idx = this.connectList.push(conn) - 1;
-        conn.on('data', (data) => {
-          console.log(data);
-          this.connectList.forEach(c => {
-            if (c !== conn) {
-              c.send(data);
-            }
+      WEB.store?.on('connection', (conn) => {
+        console.log('some connected id:', conn.peer)
+        WEB.connectIdList.push(conn.peer);
+        conn.on('open', () => {
+          WEB.connectList.push(conn)
+          WEB.connectList.forEach(c => {
+            c.send(WEB.connectIdList);
           });
-        });
-        conn.on('close', () => {
-          this.connectList.splice(idx, 1);
-          this.connectIdList.splice(idx, 1);
-          console.log('connection closed:', conn);
-        });
-      }
-    });
-    this.store?.on('error', (err) => {
+          const idx = WEB.connectList.indexOf(conn);
+          conn.on('data', (data) => {
+            WEB.connectList.forEach(c => {
+              if (c !== conn) {
+                c.send(data);
+              }
+            });
+          });
+          conn.on('close', () => {
+            WEB.connectList.splice(idx, 1);
+            WEB.connectIdList.splice(idx, 1);
+            console.log('connection closed:', conn.peer);
+          });
+        })
+        // }
+      });
+    })
+    WEB.store?.on('error', (err) => {
       console.log('error from store :', err)
     })
   }
@@ -136,6 +138,7 @@ const peer: PeerInterface = {
 
 const createPeerMiddlewareWithStore = (): Middleware => {
   peer.initPeer(undefined)
+
   return ({ dispatch, getState }) => {
     return next => (action: any) => {
       if (action.type === 'chat/connectToPeer') {
