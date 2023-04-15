@@ -9,7 +9,7 @@ const PeerJsConnectForm = () => {
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     // if (inputId.current?.value) {
-      dispatch(connectToPeer(''));
+      dispatch(connectToPeer(inputId.current?.value));
     // }
   };
 

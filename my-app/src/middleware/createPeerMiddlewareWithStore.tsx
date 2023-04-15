@@ -2,7 +2,7 @@ import { Middleware } from "@reduxjs/toolkit";
 import Peer, { DataConnection } from "peerjs";
 import { savePeerId } from "../store/store";
 
-const STORE_ID = 'T-1000';
+const STORE_ID = 'powerangers';
 
 interface WebInterface {
   store: Peer | null;
@@ -133,7 +133,7 @@ const createPeerMiddlewareWithStore = (): Middleware => {
     }
     return next => (action: any) => {
       if (action.type === 'chat/connectToPeer') {
-        peer.connectTo(STORE_ID)
+        peer.connectTo(action.payload)
       }
       if (action.type === 'chat/sendMessage') {
         peer.dataConnection?.send(action.payload)
