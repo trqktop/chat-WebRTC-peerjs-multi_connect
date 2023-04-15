@@ -2,16 +2,20 @@ import { Middleware } from "@reduxjs/toolkit";
 import Peer, { DataConnection } from "peerjs";
 import { savePeerId } from "../store/store";
 
-const STORE_ID = 'powerangers';
+const STORE_ID = '111';
 
 interface WebInterface {
   store: Peer | null;
+  connectList: DataConnection[],
+  connectIdList: string[],
   createStore: () => void;
   storeListeners: () => void;
 }
 
 const WEB: WebInterface = {
   store: null,
+  connectList: [],
+  connectIdList: [],
   createStore() {
     if (!this.store) {
       this.store = new Peer(STORE_ID)
@@ -21,18 +25,29 @@ const WEB: WebInterface = {
   storeListeners() {
     this.store?.on('open', (id: string) => {
       console.log('Store was created:', id)
+      WEB.connectIdList.push(id);
     })
-    this.store?.on('connection', (connect) => {
-      console.log('some connected to store, his id:' + connect.peer)
-
-      connect.on('error', (err) => {
-        console.log('connect error from store:', err)
-      })
-
-      connect.on('data', (data) => {
-        console.log(data)
-      })
-    })
+    this.store?.on('connection', (conn) => {
+      if (this.connectIdList.includes(conn.peer)) {
+        conn.close();
+      }
+      else {
+        const idx = this.connectList.push(conn) - 1;
+        conn.on('data', (data) => {
+          console.log(data);
+          this.connectList.forEach(c => {
+            if (c !== conn) {
+              c.send(data);
+            }
+          });
+        });
+        conn.on('close', () => {
+          this.connectList.splice(idx, 1);
+          this.connectIdList.splice(idx, 1);
+          console.log('connection closed:', conn);
+        });
+      }
+    });
     this.store?.on('error', (err) => {
       console.log('error from store :', err)
     })
@@ -70,10 +85,6 @@ const peer: PeerInterface = {
     this.peerConnection?.on('open', (id) => {
       this.peerId = id
       console.log('Peer opened:', id)
-      if (this.connectId) {
-        console.log('try to connect store')
-        // this.connectTo(this.connectId)
-      }
     })
     this.peerConnection?.on('error', (err: Error) => {
       this.handlePeerError(err)
@@ -109,6 +120,9 @@ const peer: PeerInterface = {
     if (this.dataConnection) {
       this.dataConnection.on('open', () => {
         console.log('Connected to:', this.connectId)
+        this.dataConnection?.on('data', (data) => {
+          console.log(data)
+        })
       })
       this.dataConnection.on('error', (err: Error) => {
         console.log(err)
@@ -116,31 +130,23 @@ const peer: PeerInterface = {
           console.log('Connection error:', err.type)
         }
       })
-      this.dataConnection.on('data', (data) => {
-        console.log(data)
-      })
     }
   }
 }
 
 const createPeerMiddlewareWithStore = (): Middleware => {
   peer.initPeer(undefined)
-
-
   return ({ dispatch, getState }) => {
-    if (peer.peerId) {
-      dispatch(savePeerId(peer.peerId))
-    }
     return next => (action: any) => {
       if (action.type === 'chat/connectToPeer') {
         peer.connectTo(action.payload)
+        dispatch(savePeerId(peer.peerId))
       }
       if (action.type === 'chat/sendMessage') {
         peer.dataConnection?.send(action.payload)
       }
       next(action)
     }
-
   }
 }
 
