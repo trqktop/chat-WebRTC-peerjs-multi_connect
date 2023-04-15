@@ -26,28 +26,27 @@ const WEB: WebInterface = {
     this.store?.on('open', (id: string) => {
       console.log('Store was created:', id)
       WEB.store?.on('connection', (conn) => {
-        console.log('some connected id:', conn.peer)
-        WEB.connectIdList.push(conn.peer);
         conn.on('open', () => {
+          console.log('some connected id:', conn.peer)
+          const idx = WEB.connectList.indexOf(conn);
           WEB.connectList.push(conn)
+          WEB.connectIdList.push(conn.peer);
           WEB.connectList.forEach(c => {
             c.send(WEB.connectIdList);
           });
-          const idx = WEB.connectList.indexOf(conn);
           conn.on('data', (data) => {
             WEB.connectList.forEach(c => {
               if (c !== conn) {
                 c.send(data);
               }
             });
-          });
-          conn.on('close', () => {
-            WEB.connectList.splice(idx, 1);
-            WEB.connectIdList.splice(idx, 1);
-            console.log('connection closed:', conn.peer);
+            conn.on('close', () => {
+              WEB.connectList.splice(idx, 1);
+              WEB.connectIdList.splice(idx, 1);
+              console.log('connection closed:', conn.peer);
+            });
           });
         })
-        // }
       });
     })
     WEB.store?.on('error', (err) => {
