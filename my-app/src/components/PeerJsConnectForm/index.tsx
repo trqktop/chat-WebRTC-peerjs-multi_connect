@@ -8,9 +8,9 @@ const PeerJsConnectForm = () => {
   const dispatch = useDispatch();
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputId.current?.value) {
-      dispatch(connectToPeer(inputId.current.value));
-    }
+    // if (inputId.current?.value) {
+      dispatch(connectToPeer(''));
+    // }
   };
 
   const copyHandler = (e: any) => {

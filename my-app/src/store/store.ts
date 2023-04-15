@@ -4,8 +4,11 @@ import {
   ThunkAction,
   Action,
 } from "@reduxjs/toolkit";
-import createSimplePeerMiddleware from "../middleware/createSimplePeerMIddleware";
-import createPeerMiddleware from "../middleware/createSimplePeerMIddleware";
+
+// import createPeerMiddleware from "../middleware/createPeerMiddleware";
+// import createSimplePeerMiddleware from "../middleware/createSimplePeerMIddleware";
+// import peerMiddleware from "../middleware/inprogressMiddelwares/peerMiddleware";
+import createPeerMiddlewareWithStore from "../middleware/createPeerMiddlewareWithStore";
 export type TMessage = {
   user: string | null;
   message: string;
@@ -83,8 +86,8 @@ export const chatSlice = createSlice({
     connectToPeer(state, action) {
       state.connected = true;
     },
-    savePeerId(state, aciton) {
-      state.peerId = aciton.payload;
+    savePeerId(state, action) {
+      state.peerId = action.payload;
     },
   },
 });
@@ -99,13 +102,17 @@ export const {
   getUsers,
   connectToPeer,
 } = chatSlice.actions;
+
+const peerMiddleware = createPeerMiddlewareWithStore();
 export const store = configureStore({
   reducer: {
     chat: chatReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(createSimplePeerMiddleware()),
+  middleware: [peerMiddleware]
 });
+
+
+
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
