@@ -1,13 +1,13 @@
 import React from "react";
 import "./MessageControlPanel.css";
-import { replyMessage } from "../../store/store";
+// import { replyMessage } from "../../store/store";
 import { useDispatch } from "react-redux";
 
 const MessageControlPanel = ({ message }: any) => {
   const dispatch = useDispatch();
   const clickHandler = (e: any) => {
     // delete message?.file?.src
-    dispatch(replyMessage(message));
+    // dispatch(replyMessage(message));
   };
   return (
     <div className="control-panel">

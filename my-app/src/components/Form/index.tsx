@@ -1,7 +1,6 @@
-import { sendMessage, replyMessage, RootState } from "../../store/store";
+import { sendMessage } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import { sendName } from "../../store/store";
 import nameGenerator from "../../utils/nameGenerator";
 import ReplyPanel from "../ReplyPanel";
 import toBase64 from "../../utils/formater/toBase64";
@@ -22,25 +21,25 @@ const Form = () => {
   // }, []);
 
   const sendMessageWithFiles = () =>
-    // fileInput: any,
-    // setFilePath: React.SetStateAction<any>
-    {
-      // const file = fileInput.files[0];
-      toBase64(file.current).then((url) => {
-        // const fileData = {
-        //   src: url,
-        //   type: file.type,
-        // };
-        const fileData: any = {
-          src: url,
-          type: file.current.type,
-        };
-        dispatch(sendMessage({ message: messageInputValue, file: fileData })); //reply
-      });
-      // setFilePath(null);
+  // fileInput: any,
+  // setFilePath: React.SetStateAction<any>
+  {
+    // const file = fileInput.files[0];
+    toBase64(file.current).then((url) => {
+      // const fileData = {
+      //   src: url,
+      //   type: file.type,
+      // };
+      const fileData: any = {
+        src: url,
+        type: file.current.type,
+      };
+      dispatch(sendMessage({ message: messageInputValue, file: fileData })); //reply
+    });
+    // setFilePath(null);
 
-      // dispatch(sendMessage(messageInputValue));
-    };
+    // dispatch(sendMessage(messageInputValue));
+  };
 
   const sendMessageWithoutFiles = () => {
     dispatch(sendMessage({ message: messageInputValue }));
