@@ -1,6 +1,5 @@
 import Peer from "peerjs";
 import { WebInterface, PeerInterface } from "../../types";
-import { WEBCreator, getMessage, getUsers } from "../../store/store";
 const WEB_ID = '111';
 const WEB: WebInterface = {
   store: null,
