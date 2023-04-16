@@ -50,8 +50,8 @@ const peer: PeerInterface = {
   dataConnection: null,
   peerId: null,
   connectId: null,
-  dispatch: null,
-  getState: null,
+  handleConnectEvent: null,
+  dataFromListener: null,
   initPeer(id) {
     this.peerId = id
     if (!this.peerConnection) {
@@ -78,9 +78,6 @@ const peer: PeerInterface = {
         this.dataConnection = null
       }
       WEB.createStore();
-      if (this.dispatch) {
-        this.dispatch(WEBCreator(true))
-      }
       if (WEB.store) {
         this.connectTo(this.connectId)
       }
@@ -101,23 +98,10 @@ const peer: PeerInterface = {
   dataConnectionListeners() {
     if (this.dataConnection) {
       this.dataConnection.on('open', () => {
-        // if (this.getState) {
-        //   const state = this.getState()
-        //   this.dataConnection?.send(state.chat.userName)
-        // }
         console.log('Connected to:', this.connectId)
         this.dataConnection?.on('data', (data: any) => {
-          if (this.dispatch) {
-            switch (data.type) {
-              case 'idList':
-                this.dispatch(getUsers(data))
-                break
-              case 'message':
-                this.dispatch(getMessage({ message: data.data.message }))
-                break
-              default:
-                break
-            }
+          if (this.handleConnectEvent) {
+            this.handleConnectEvent(data)
           }
         })
       })

@@ -12,6 +12,7 @@ export interface WebInterface {
 
 export interface PeerInterface {
     peerConnection: Peer | null;
+    handleConnectEvent: null | ((data: any) => void)
     dataConnection: DataConnection | null;
     peerId: string | null | undefined;
     connectId: string | null | undefined;
@@ -20,6 +21,5 @@ export interface PeerInterface {
     handlePeerError: (err: Error) => void;
     connectTo: (id: string) => void;
     dataConnectionListeners: () => void;
-    dispatch: Dispatch | null,
-    getState: (() => RootState) | null
+    dataFromListener: any
 }
