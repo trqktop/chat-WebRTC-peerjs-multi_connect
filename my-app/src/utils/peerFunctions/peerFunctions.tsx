@@ -1,6 +1,6 @@
 import Peer from "peerjs";
 import { WebInterface, PeerInterface } from "../../types";
-import { WEBCreator, getMessage } from "../../store/store";
+import { WEBCreator, getMessage, getUsers } from "../../store/store";
 const WEB_ID = '111';
 const WEB: WebInterface = {
   store: null,
@@ -24,10 +24,10 @@ const WEB: WebInterface = {
           WEB.connectList.forEach(c => {
             c.send({ type: 'idList', data: WEB.connectIdList });
           });
-          conn.on('data', (message) => {
+          conn.on('data', (data) => {
             WEB.connectList.forEach(c => {
               if (c !== conn) {
-                c.send({ type: 'message', data: message });
+                c.send({ type: 'message', data: data });
               }
             });
             conn.on('close', () => {
@@ -51,7 +51,7 @@ const peer: PeerInterface = {
   peerId: null,
   connectId: null,
   dispatch: null,
-
+  getState: null,
   initPeer(id) {
     this.peerId = id
     if (!this.peerConnection) {
@@ -60,7 +60,6 @@ const peer: PeerInterface = {
       this.peerConnectionListeners();
     }
   },
-
   peerConnectionListeners() {
     this.peerConnection?.on('open', (id) => {
       this.peerId = id
@@ -102,19 +101,23 @@ const peer: PeerInterface = {
   dataConnectionListeners() {
     if (this.dataConnection) {
       this.dataConnection.on('open', () => {
+        // if (this.getState) {
+        //   const state = this.getState()
+        //   this.dataConnection?.send(state.chat.userName)
+        // }
         console.log('Connected to:', this.connectId)
         this.dataConnection?.on('data', (data: any) => {
-          switch (data.type) {
-            case 'idList':
-              console.log(data, 'idList')
-              break
-            case 'message':
-              if (this.dispatch) {
+          if (this.dispatch) {
+            switch (data.type) {
+              case 'idList':
+                this.dispatch(getUsers(data))
+                break
+              case 'message':
                 this.dispatch(getMessage({ message: data.data.message }))
-              }
-              break
-            default:
-              break
+                break
+              default:
+                break
+            }
           }
         })
       })

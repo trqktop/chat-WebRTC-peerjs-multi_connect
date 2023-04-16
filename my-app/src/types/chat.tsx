@@ -15,6 +15,8 @@ export interface ChatState {
     peerId: string | null;
     WEBcreator: boolean;
     messages: any[];
+    userList: string[];
+    userName: null | string
 }
 
 

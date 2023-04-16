@@ -5,12 +5,13 @@ import {
 import createPeerMiddlewareWithStore from "../middleware/createPeerMiddlewareWithStore";
 import { ChatState } from '../types/chat';
 
-
 const initialState: ChatState = {
   connected: false,
   peerId: null,
   WEBcreator: false,
   messages: [],
+  userList: [],
+  userName: null
 };
 
 export const chatSlice = createSlice({
@@ -31,17 +32,27 @@ export const chatSlice = createSlice({
     },
     WEBCreator(state, action) {
       state.WEBcreator = action.payload
+    },
+    getUsers(state, action) {
+      state.userList = action.payload
+    },
+    saveUserName(state, action) {
+      state.userName = action.payload
+      state.userList = [...state.userList, action.payload]
     }
   },
 });
 const chatReducer = chatSlice.reducer;
 export const {
   sendMessage,
+  saveUserName,
   savePeerId,
   getMessage,
   connectToPeer,
-  WEBCreator
+  WEBCreator,
+  getUsers
 } = chatSlice.actions;
+
 
 const peerMiddleware = createPeerMiddlewareWithStore();
 export const store = configureStore({
@@ -50,3 +61,4 @@ export const store = configureStore({
   },
   middleware: [peerMiddleware]
 });
+

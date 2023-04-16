@@ -1,5 +1,6 @@
 import Peer, { DataConnection } from "peerjs";
 import { Dispatch } from "@reduxjs/toolkit";
+import { RootState } from "./chat";
 
 export interface WebInterface {
     store: Peer | null;
@@ -19,5 +20,6 @@ export interface PeerInterface {
     handlePeerError: (err: Error) => void;
     connectTo: (id: string) => void;
     dataConnectionListeners: () => void;
-    dispatch: Dispatch | null
+    dispatch: Dispatch | null,
+    getState: (() => RootState) | null
 }
