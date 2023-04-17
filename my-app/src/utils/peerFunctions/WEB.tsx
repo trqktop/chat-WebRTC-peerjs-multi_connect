@@ -59,7 +59,7 @@ const WEB: WebInterface = {
     this.store?.on("error", (err) => {
       console.log("error from store :", err);
       if ("type" in err) {
-        peer.connectTo(WEB_ID)
+        // peer.connectTo(WEB_ID)
       }
     });
   },

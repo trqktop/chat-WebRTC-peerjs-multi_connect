@@ -33,8 +33,17 @@ const peer: PeerInterface = {
       if (this.dataConnection) {
         this.clearDataConnection();
       }
-      WEB.createStore()
-      this.connectTo(this.connectId)
+
+      setTimeout(() => {
+        if (this.connectId) {
+          WEB.createStore()
+        }
+      }, 233)
+      setTimeout(() => {
+        if (this.connectId) {
+          this.connectTo(this.connectId)
+        }
+      }, 333)
     } else {
       console.error(err);
     }
@@ -64,10 +73,17 @@ const peer: PeerInterface = {
           if (this.handleConnectEvent) {
             if (data.type === "WEBClose") {
               this.clearDataConnection();
-              WEB.createStore();
-              if (WEB.store) {
-                this.connectTo(data.WEBid);
-              }
+
+              setTimeout(() => {
+                if (this.connectId) {
+                  this.connectTo(this.connectId)
+                  WEB.createStore()
+                }
+              }, 233)
+              // WEB.createStore();
+              // if (WEB.store) {
+              //   this.connectTo(data.WEBid);
+              // }
             }
             this.handleConnectEvent(data);
           }

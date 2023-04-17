@@ -59,7 +59,7 @@ const decentralizedConnect: decentralizedConnectInterface = {
       const connect = this.peer?.connect(id);
       if (connect) {
         this.connectListeners(connect);
-        WEB.storeListeners();
+        // WEB.storeListeners();
       }
     }
   },
