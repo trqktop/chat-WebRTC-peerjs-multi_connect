@@ -27,8 +27,7 @@ const MessagesContainer = () => {
   //   return await result;
   // }
   const messages = useSelector((state: RootState) => state.chat.messages);
-  const myName = useSelector((state: any) => state.chat.myName);
-  console.log(messages)
+  const myName = useSelector((state: any) => state.chat.userName);
   // const [messagesWithFiles, setMessagesWithFiles]: Awaited<Promise<any>> =
   //   useState(null);
   // useEffect(() => {

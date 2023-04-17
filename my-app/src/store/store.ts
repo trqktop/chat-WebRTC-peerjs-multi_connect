@@ -1,9 +1,6 @@
-import {
-  configureStore,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 import createPeerMiddlewareWithStore from "../middleware/createPeerMiddlewareWithStore";
-import { ChatState } from '../types/chat';
+import { ChatState } from "../types/chat";
 
 const initialState: ChatState = {
   connected: false,
@@ -11,7 +8,7 @@ const initialState: ChatState = {
   WEBcreator: false,
   messages: [],
   userList: [],
-  userName: null
+  userName: null,
 };
 
 export const chatSlice = createSlice({
@@ -19,7 +16,7 @@ export const chatSlice = createSlice({
   initialState,
   reducers: {
     getMessage(state, action) {
-      state.messages = [...state.messages, action.payload]
+      state.messages = [...state.messages, action.payload];
     },
     sendMessage(state, action): any {
       state.messages = [...state.messages, action.payload];
@@ -31,15 +28,14 @@ export const chatSlice = createSlice({
       state.peerId = action.payload;
     },
     WEBCreator(state, action) {
-      state.WEBcreator = action.payload
+      state.WEBcreator = action.payload;
     },
     getUsers(state, action) {
-      state.userList = action.payload
+      state.userList = action.payload;
     },
     saveUserName(state, action) {
-      state.userName = action.payload
-      state.userList = [...state.userList, action.payload]
-    }
+      state.userName = action.payload;
+    },
   },
 });
 const chatReducer = chatSlice.reducer;
@@ -50,15 +46,13 @@ export const {
   getMessage,
   connectToPeer,
   WEBCreator,
-  getUsers
+  getUsers,
 } = chatSlice.actions;
-
 
 const peerMiddleware = createPeerMiddlewareWithStore();
 export const store = configureStore({
   reducer: {
     chat: chatReducer,
   },
-  middleware: [peerMiddleware]
+  middleware: [peerMiddleware],
 });
-

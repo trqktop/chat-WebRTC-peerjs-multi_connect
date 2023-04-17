@@ -5,10 +5,6 @@ import Message from "./Message";
 import localforage from "localforage";
 import "./Messages.css";
 
-
-
-
-
 const Messages = ({ messages, myName }: any) => {
   const lastMessageRef: any = useRef(null);
   useEffect(() => {
@@ -16,11 +12,12 @@ const Messages = ({ messages, myName }: any) => {
   }, [messages]);
 
   return (
-    <ul className="message">
+    <ul className="messages-container">
       {messages.map((data: any, index: any) => {
-        const { user }: any = { ...data };
         const classes =
-          myName === user ? "message__item" : "message__item message__item_get";
+          myName.userName === data.author.userName
+            ? "message__item"
+            : "message__item message__item_get";
         return (
           <li className={classes} key={index} ref={lastMessageRef}>
             <Message data={data} />

@@ -1,15 +1,18 @@
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connectToPeer } from "../../store/store";
+import { RootState } from "../../types/chat";
 import "./PeerJsConnectForm.css";
 const PeerJsConnectForm = () => {
   const inputId = useRef<HTMLInputElement>(null);
   const peerId = useSelector((state: any) => state.chat.peerId);
+  const isWebCreator = useSelector((state: RootState) => state.chat.WEBcreator);
+
   const dispatch = useDispatch();
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     // if (inputId.current?.value) {
-      dispatch(connectToPeer(inputId.current?.value));
+    dispatch(connectToPeer(inputId.current?.value));
     // }
   };
 
@@ -24,9 +27,14 @@ const PeerJsConnectForm = () => {
       });
   };
 
+  const color = isWebCreator ? "red" : "white";
   return (
     <form onSubmit={submitHandler} className="peerjs-form">
-      <span className="peerjs-form__id" onClick={copyHandler}>
+      <span
+        style={{ color: color }}
+        className="peerjs-form__id"
+        onClick={copyHandler}
+      >
         {peerId}
       </span>
       <input

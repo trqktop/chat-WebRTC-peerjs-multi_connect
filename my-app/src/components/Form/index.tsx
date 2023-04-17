@@ -1,5 +1,5 @@
 import { sendMessage } from "../../store/store";
-import { useDispatch, } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useState, useRef } from "react";
 import ReplyPanel from "../ReplyPanel";
 import "./Form.css";
@@ -13,11 +13,10 @@ const Form: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(sendMessage({ message: messageInputValue }));
+    dispatch(sendMessage(messageInputValue));
     setMessageInputValue("");
     setFilePath(null);
   };
-
 
   const handleFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;

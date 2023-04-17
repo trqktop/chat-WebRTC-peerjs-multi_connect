@@ -3,7 +3,7 @@ import MessageControlPanel from "../../MessageControlPanel";
 // import getTypeFile from "../../utils/getTypeFile";
 // import ReplyMessageBlock from "../ReplyMessageBlock";
 const Message = ({ data }: any) => {
-  const { id, message }: any = { ...data };
+  const { author, text }: any = { ...data };
 
   // const { user, message, file, id, reply }: any = { ...data };
   // const { src, type }: any = { ...file };
@@ -19,9 +19,9 @@ const Message = ({ data }: any) => {
       {/* {modalIsOpened ? <MessageModal /> : null}  */}
       <div className="message__item-container">
         {/* id={0} */}
-        {/* <ReplyMessageBlock reply={reply} />
-        <span className="message__username">{user}</span> */}
-        <span>{message}</span>
+        {/* <ReplyMessageBlock reply={reply} />*/}
+        <span className="message__username">{author.userName}</span>
+        <span>{text}</span>
         {/* <span className="message__file">{renderFile}</span> */}
         <MessageControlPanel message={data} />
       </div>

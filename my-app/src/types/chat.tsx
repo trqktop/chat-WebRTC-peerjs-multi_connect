@@ -1,5 +1,6 @@
 import { store } from "../store/store";
 import { ThunkAction, Action } from "@reduxjs/toolkit";
+import { userInterface } from ".";
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<
@@ -16,7 +17,7 @@ export interface ChatState {
     WEBcreator: boolean;
     messages: any[];
     userList: string[];
-    userName: null | string
+    userName: null | userInterface
 }
 
 
