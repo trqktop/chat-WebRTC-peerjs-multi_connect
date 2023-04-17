@@ -15,9 +15,8 @@ export interface WebInterface {
   store: Peer | null;
   connectList: DataConnection[];
   connectIdList: Array<userInterface>;
-  createStore: () => void;
+  createStore: () => any;
   storeListeners: () => void;
-
 }
 
 export interface PeerInterface {
@@ -29,7 +28,7 @@ export interface PeerInterface {
   initPeer: (id: string | undefined) => void;
   peerConnectionListeners: () => void;
   handlePeerError: (err: Error) => void;
-  connectTo: (id: string) => void;
+  connectTo: (id: string) => any;
   dataConnectionListeners: () => void;
   dataFromListener: any;
   clearDataConnection: () => void;

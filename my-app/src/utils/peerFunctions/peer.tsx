@@ -1,3 +1,4 @@
+"use strict"
 import Peer from "peerjs";
 import { PeerInterface } from "../../types";
 import WEB from "./WEB";
@@ -32,8 +33,8 @@ const peer: PeerInterface = {
       if (this.dataConnection) {
         this.clearDataConnection();
       }
-      WEB.createStore();
-      this.connectTo(this.connectId);
+      WEB.createStore()
+      this.connectTo(this.connectId)
     } else {
       console.error(err);
     }
