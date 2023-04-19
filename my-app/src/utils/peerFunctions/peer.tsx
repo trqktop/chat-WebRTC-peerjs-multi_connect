@@ -1,4 +1,3 @@
-"use strict"
 import Peer from "peerjs";
 import { PeerInterface } from "../../types";
 import WEB from "./WEB";
@@ -8,8 +7,9 @@ const peer: PeerInterface = {
   dataConnection: null,
   peerId: null,
   connectId: null,
-  handleConnectEvent: null,
+  handleWEBConnectEvent: null,
   dataFromListener: null,
+  idIsTaken: false,
   initPeer(id) {
     this.peerId = id;
     if (!this.peerConnection) {
@@ -19,39 +19,30 @@ const peer: PeerInterface = {
     }
   },
   peerConnectionListeners() {
-    this.peerConnection?.on("open", (id) => {
-      this.peerId = id;
-      console.log("Peer opened:", id);
-    });
-    this.peerConnection?.on("error", (err) => {
-      this.handlePeerError(err);
-    });
+    if (this.peerConnection) {
+      this.peerConnection.on("open", (id) => {
+        this.peerId = id;
+        console.log("Peer opened:", id);
+      });
+      this.peerConnection.on("error", (err) => {
+        this.handlePeerError(err);
+      });
+    }
   },
 
   handlePeerError(err) {
-    if ("type" in err && err.type === "peer-unavailable" && this.connectId) {
-      if (this.dataConnection) {
-        this.clearDataConnection();
-      }
-
-      setTimeout(() => {
-        if (this.connectId) {
-          WEB.createStore()
-        }
-      }, 233)
-      setTimeout(() => {
-        if (this.connectId) {
-          this.connectTo(this.connectId)
-        }
-      }, 333)
+    if (!this.idIsTaken) {
+      this.rebaseWEB();
     } else {
-      console.error(err);
+      this.connectTo(this.connectId!);
     }
   },
   clearDataConnection() {
-    this.dataConnection?.close();
-    this.dataConnection?.removeAllListeners();
-    this.dataConnection = null;
+    if (this.dataConnection) {
+      this.dataConnection.close();
+      this.dataConnection.removeAllListeners();
+      this.dataConnection = null;
+    }
   },
   connectTo(id) {
     if (!this.dataConnection) {
@@ -59,41 +50,60 @@ const peer: PeerInterface = {
       if (this.peerConnection) {
         this.dataConnection = this.peerConnection.connect(id);
         this.dataConnectionListeners();
+      } else {
+        this.initPeer(undefined);
+        this.connectTo(id);
       }
     } else {
       this.clearDataConnection();
       this.connectTo(id);
     }
   },
+  rebaseWEB() {
+    WEB.clearWEB();
+    WEB.createStore();
+    WEB.initWebHandler = (id) => {
+      console.log("WEB was opened , try connect to", id);
+      this.connectTo(id);
+    };
+  },
   dataConnectionListeners() {
     if (this.dataConnection) {
+      WEB.errorHandleListener = (err) => {
+        console.log("err form peer :" + err.message);
+        if (err.message.includes("is taken")) {
+          console.log("err from peer ID :" + err.message);
+        }
+        this.connectTo(this.connectId!);
+      };
       this.dataConnection.on("open", () => {
         console.log("Connected to:", this.connectId);
         this.dataConnection?.on("data", (data: any) => {
-          if (this.handleConnectEvent) {
+          if (this.handleWEBConnectEvent) {
             if (data.type === "WEBClose") {
-              this.clearDataConnection();
-
-              setTimeout(() => {
-                if (this.connectId) {
-                  this.connectTo(this.connectId)
-                  WEB.createStore()
-                }
-              }, 233)
-              // WEB.createStore();
-              // if (WEB.store) {
-              //   this.connectTo(data.WEBid);
-              // }
+              if (data.WEBid.id === this.peerConnection?.id) {
+                this.idIsTaken = false;
+                this.rebaseWEB();
+              } else {
+                this.idIsTaken = true;
+                this.connectTo(this.connectId!);
+              }
             }
-            this.handleConnectEvent(data);
+            this.handleWEBConnectEvent(data);
           }
         });
       });
       this.dataConnection.on("error", (err) => {
-        if ("type" in err) {
-          console.log("Connection error:", err.type);
-        }
+        console.log(err, err.message);
+        console.log(
+          "Connection error from DataConnectionListeners:",
+          err.message
+        );
+        this.connectTo(this.connectId!);
       });
+      window.onbeforeunload = () => {
+        this.dataConnection?.close();
+      };
     }
   },
 };

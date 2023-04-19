@@ -5,15 +5,15 @@ import { RootState } from "../../types/chat";
 import "./PeerJsConnectForm.css";
 const PeerJsConnectForm = () => {
   const inputId = useRef<HTMLInputElement>(null);
-  const peerId = useSelector((state: any) => state.chat.peerId);
   const isWebCreator = useSelector((state: RootState) => state.chat.WEBcreator);
-
+  const isConnected = useSelector((state: RootState) => state.chat.connected);
   const dispatch = useDispatch();
+
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    // if (inputId.current?.value) {
-    dispatch(connectToPeer(inputId.current?.value));
-    // }
+    if (inputId.current?.value.length) {
+      dispatch(connectToPeer(inputId.current?.value));
+    }
   };
 
   const copyHandler = (e: any) => {
@@ -27,22 +27,40 @@ const PeerJsConnectForm = () => {
       });
   };
 
-  const color = isWebCreator ? "red" : "white";
+  const connectIndicator =
+    isConnected && isWebCreator ? (
+      <span style={{ color: "rgb(120, 177, 120)" }}>"WEB CREATOR"</span>
+    ) : (
+      <span style={{ color: isConnected ? "rgb(120, 177, 120)" : "white" }}>
+        "CONNECT"
+      </span>
+    );
+
   return (
     <form onSubmit={submitHandler} className="peerjs-form">
-      <span
-        style={{ color: color }}
-        className="peerjs-form__id"
-        onClick={copyHandler}
-      >
-        {peerId}
+      <span className="peerjs-form__id" onClick={copyHandler}>
+        {connectIndicator}
       </span>
-      <input
-        className="peerjs-form__input"
-        ref={inputId}
-        placeholder="enter id..."
-      ></input>
-      <button className="peerjs-form__sbmt">Connect...</button>
+      <fieldset
+        className="peerjs-form__fieldset"
+        disabled={isConnected}
+        style={isConnected ? { opacity: ".3" } : {}}
+      >
+        <input
+          className="peerjs-form__input"
+          ref={inputId}
+          placeholder="enter id..."
+        ></input>
+        <button
+          disabled={isConnected}
+          className="peerjs-form__sbmt"
+          style={
+            isConnected ? { pointerEvents: "none" } : { pointerEvents: "all" }
+          }
+        >
+          Connect...
+        </button>
+      </fieldset>
     </form>
   );
 };

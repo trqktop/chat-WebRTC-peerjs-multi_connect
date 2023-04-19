@@ -7,12 +7,17 @@
 
 
 .form {
-    display: flex;
     padding: 1em;
     font-size: 16px;
+    gap: 16px;
+}
+
+.form__fieldset {
+    outline: none;
+    border: none;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
 }
 
 .form__button-group {

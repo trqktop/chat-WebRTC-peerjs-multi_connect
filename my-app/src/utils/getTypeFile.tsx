@@ -3,7 +3,7 @@ type TSize = {
   height: string | number;
 };
 
-const getTypeFile = (type: string, src: string, size: TSize) => {
+const getTypeFile = (type: string, src: any, size: TSize) => {
   const searchType = type.split("/")[0];
   switch (searchType) {
     case "image":

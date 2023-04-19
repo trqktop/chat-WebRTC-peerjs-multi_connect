@@ -1,6 +1,16 @@
 .peerjs-form {
   border: 1px rgb(48, 48, 48) solid;
-  display: grid;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+}
+
+.peerjs-form__fieldset {
+  max-width: 100%;
+  border: none;
+  outline: none;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -8,6 +18,9 @@
 
 .peerjs-form__id {
   font-size: 14px;
+  width: 91px;
+  display: block;
+  padding: 8px;
   cursor: pointer;
 }
 
@@ -39,6 +52,7 @@
   border: none;
   outline: none;
   cursor: pointer;
+
 }
 
 .peerjs-form__sbmt:hover {

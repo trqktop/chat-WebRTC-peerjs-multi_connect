@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { RootState } from "../../types/chat";
 import { useSelector } from "react-redux";
 import Messages from "../../components/Messages";
 import "./MessagesContainer.css";
-const MessagesContainer = () => {
+import { messageInterfase, userInterface } from "../../types";
+const MessagesContainer: React.FunctionComponent = () => {
   // async function mergeMessagesWithIDB(messages: any) {
   //   const result = localforage
   //     .getItem("files")
@@ -26,8 +27,13 @@ const MessagesContainer = () => {
   //     });
   //   return await result;
   // }
-  const messages = useSelector((state: RootState) => state.chat.messages);
-  const myName = useSelector((state: any) => state.chat.userName);
+  const messages: Array<messageInterfase> = useSelector(
+    (state: RootState) => state.chat.messages
+  );
+  const myName: userInterface | null = useSelector(
+    (state: RootState) => state.chat.userName
+  );
+
   // const [messagesWithFiles, setMessagesWithFiles]: Awaited<Promise<any>> =
   //   useState(null);
   // useEffect(() => {
@@ -38,12 +44,13 @@ const MessagesContainer = () => {
   //     });
   //   }
   // }, [messages]);
-
-  return (
-    <ul className="messages-container">
-      <Messages messages={messages} myName={myName} />
-    </ul>
-  );
+  if (messages.length && myName)
+    return (
+      <ul className="messages-container">
+        <Messages messages={messages} myName={myName} />
+      </ul>
+    );
+  return null;
 };
 
 export default MessagesContainer;

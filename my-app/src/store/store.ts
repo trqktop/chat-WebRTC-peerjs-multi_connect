@@ -6,6 +6,7 @@ const initialState: ChatState = {
   connected: false,
   peerId: null,
   WEBcreator: false,
+  replyMessage: null,
   messages: [],
   userList: [],
   userName: null,
@@ -18,7 +19,7 @@ export const chatSlice = createSlice({
     getMessage(state, action) {
       state.messages = [...state.messages, action.payload];
     },
-    sendMessage(state, action): any {
+    sendMessage(state, action) {
       state.messages = [...state.messages, action.payload];
     },
     connectToPeer(state, action) {
@@ -36,6 +37,12 @@ export const chatSlice = createSlice({
     saveUserName(state, action) {
       state.userName = action.payload;
     },
+    getMessages(state, action) {
+      state.messages = action.payload;
+    },
+    replyMessage(state, action) {
+      state.replyMessage = action.payload;
+    },
   },
 });
 const chatReducer = chatSlice.reducer;
@@ -45,6 +52,8 @@ export const {
   savePeerId,
   getMessage,
   connectToPeer,
+  getMessages,
+  replyMessage,
   WEBCreator,
   getUsers,
 } = chatSlice.actions;

@@ -1,7 +1,7 @@
-const toBase64 = (file: File) => {
+const toBase64 = async (file: File): Promise<string | null | ArrayBuffer> => {
   const reader = new FileReader();
   reader.readAsDataURL(file);
-  return new Promise((res) => {
+  return await new Promise((res) => {
     reader.onloadend = function () {
       const url = reader.result;
       res(url);

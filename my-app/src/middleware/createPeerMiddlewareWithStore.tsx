@@ -1,113 +1,51 @@
-import { Dispatch, Middleware } from "@reduxjs/toolkit";
+import { Middleware, MiddlewareAPI } from "@reduxjs/toolkit";
 import { peer } from "../utils/peerFunctions/peer";
 import {
   savePeerId,
   getMessage,
   saveUserName,
   getUsers,
+  getMessages,
   sendMessage,
   WEBCreator,
 } from "../store/store";
-import { messageInterfase } from "../types";
+import { messageInterfase, FileInterface } from "../types";
 import { userInterface } from "../types";
-import { DataConnection } from "peerjs";
-import Peer from "peerjs";
-import { AppDispatch, RootState } from "../types/chat";
 import WEB from "../utils/peerFunctions/WEB";
-interface decentralizedConnectInterface {
-  idList: Array<userInterface>;
-  peer: Peer | null;
-  connectList: Array<DataConnection>;
-  connectToList: (idList: Array<userInterface>) => void;
-  connectTo: (id: string) => void;
-  connectListeners: (connect: DataConnection) => void;
-  peerListeners: (peer: Peer) => void;
-  handleConnectEvent: ((data: any) => void) | null;
-  isConnectedTo: (id: string) => boolean;
-  updatePeerListeners: () => void;
-}
-
-const decentralizedConnect: decentralizedConnectInterface = {
-  idList: [],
-  connectList: [],
-  peer: null,
-  handleConnectEvent: null,
-
-  updatePeerListeners() {
-    if (this.peer) {
-      this.peer?.removeAllListeners();
-      this.peerListeners(this.peer);
-      peer.peerConnectionListeners();
-    }
-  },
-
-  connectToList(idList) {
-    this.updatePeerListeners();
-    this.idList = idList;
-    this.idList.forEach(({ id }: userInterface) => {
-      if (this.peer?.id !== id && !this.isConnectedTo(id)) {
-        this.connectTo(id);
-      }
-    });
-  },
-
-  isConnectedTo(id) {
-    return this.connectList.some((conn) => conn.peer === id);
-  },
-  connectTo(id) {
-    if (!this.isConnectedTo(id)) {
-      const connect = this.peer?.connect(id);
-      if (connect) {
-        this.connectListeners(connect);
-        // WEB.storeListeners();
-      }
-    }
-  },
-
-  connectListeners(connect) {
-    connect.on("open", () => {
-      console.log("decentralized connect was opened");
-      this.connectList.push(connect);
-    });
-    connect.on("error", (err) => {
-      console.log("decentralized connect err:", err);
-    });
-  },
-  peerListeners(peer) {
-    peer.on("connection", (client) => {
-      console.log("decentralized connect, some conndected id:", client.peer);
-      client.on("open", () => {
-        client.on("data", (data) => {
-          if (this.handleConnectEvent) {
-            this.handleConnectEvent(data);
-          }
-        });
-      });
-    });
-  },
-};
-
-type storeInterface = {
-  dispatch: AppDispatch;
-  getState: () => RootState;
-};
+import decentralizedConnect from "../utils/peerFunctions/decentralizedConnect";
 
 const createPeerMiddlewareWithStore = (): Middleware => {
   peer.initPeer(undefined);
-  return ({ dispatch, getState }: storeInterface) => {
-    peer.handleConnectEvent = (event) => {
+  return ({ dispatch, getState }: MiddlewareAPI) => {
+    peer.handleWEBConnectEvent = (event) => {
       switch (event.type) {
+        case "WEBClose":
+          if (event.WEBid.id === peer.peerConnection?.id) {
+            dispatch(WEBCreator(true));
+          }
+          break;
         case "idList":
           decentralizedConnect.peer = peer.peerConnection;
           decentralizedConnect.connectToList(event.data);
           dispatch(getUsers(event.data));
-          const myName = event.data.find(
-            (user: userInterface) => user.id === peer.peerId
-          );
-          dispatch(saveUserName(myName));
+          if (WEB.connectList.length && !getState().chat.WEBcreator) {
+            dispatch(WEBCreator(true));
+          }
+          if (!getState().chat.userName) {
+            const myName: userInterface = event.data.find(
+              (user: userInterface) => user.id === peer.peerId
+            );
+            dispatch(saveUserName(myName));
+          }
           break;
         default:
           break;
+      }
+    };
+    decentralizedConnect.handleConnectNewClient = (connect) => {
+      const state = getState().chat;
+      if (state.WEBcreator) {
+        connect.send({ type: "messages", data: state.messages });
       }
     };
     decentralizedConnect.handleConnectEvent = (event) => {
@@ -115,20 +53,32 @@ const createPeerMiddlewareWithStore = (): Middleware => {
         case "message":
           dispatch(getMessage(event));
           break;
+        case "messages":
+          dispatch(getMessages(event.data));
+          break;
         default:
           break;
       }
     };
+
     return (next) => (action) => {
       switch (action.type) {
         case "chat/connectToPeer":
+          //подключаемся к комнате
+          WEB.webID = action.payload;
           peer.connectTo(action.payload);
           next(savePeerId(peer.peerId));
           break;
         case "chat/sendMessage":
-          const userName = getState().chat.userName;
+          const chat = getState().chat;
+          const userName = chat.userName;
+          const reply = chat.replyMessage;
           if (userName) {
-            const message = messageConstructor(action.payload, userName);
+            const { text, file, reply }: messageInterfase = {
+              ...action.payload,
+            };
+            const message = messageConstructor(text!, userName!, file!, reply!);
+            //всем децентрализированным пользователем рассылаем сообщения
             decentralizedConnect.connectList.forEach((connect) => {
               connect.send(message);
             });
@@ -143,13 +93,15 @@ const createPeerMiddlewareWithStore = (): Middleware => {
 
 const messageConstructor = (
   text: string,
-  author: userInterface
-): messageInterfase => {
-  return {
-    author,
-    text,
-    type: "message",
-  };
-};
+  author: userInterface,
+  file: FileInterface,
+  reply: messageInterfase
+): messageInterfase => ({
+  author,
+  text,
+  file,
+  type: "message",
+  reply,
+});
 
 export default createPeerMiddlewareWithStore;

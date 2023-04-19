@@ -1,26 +1,30 @@
-import { RootState } from "../../types/chat";
-import { useSelector } from "react-redux";
-import React, { useEffect, useRef, useState } from "react";
-import Message from "./Message";
-import localforage from "localforage";
+import { useEffect, useRef } from "react";
+import { messageInterfase, userInterface } from "../../types";
+import Message from "../Message";
 import "./Messages.css";
 
-const Messages = ({ messages, myName }: any) => {
-  const lastMessageRef: any = useRef(null);
+type MyProps = {
+  messages: Array<messageInterfase>;
+  myName: userInterface;
+};
+
+const Messages: React.FunctionComponent<MyProps> = ({ messages, myName }) => {
+  const lastMessageRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
-    lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (lastMessageRef.current)
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
     <ul className="messages-container">
-      {messages.map((data: any, index: any) => {
+      {messages.map((message: messageInterfase, index: number) => {
         const classes =
-          myName.userName === data.author.userName
+          myName.userName === message.author.userName
             ? "message__item"
             : "message__item message__item_get";
         return (
           <li className={classes} key={index} ref={lastMessageRef}>
-            <Message data={data} />
+            <Message message={message} />
           </li>
         );
       })}
